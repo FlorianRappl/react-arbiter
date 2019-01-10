@@ -1,0 +1,8 @@
+bin
+src
+test
+.editorconfig
+jest.config.js
+prettier.config.js
+tsconfig.json
+tslint.json
