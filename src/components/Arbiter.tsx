@@ -12,7 +12,7 @@ export interface ArbiterProps<TApi> {
   modules?: Array<Module<TApi>>;
   fetchDependency?(url: string): Promise<string>;
   dependencies?: AvailableDependencies;
-  children: React.ReactChild | ArbiterDisplay<TApi>;
+  children?: React.ReactChild | ArbiterDisplay<TApi>;
 }
 
 export interface ArbiterState<TApi> {
@@ -74,7 +74,7 @@ export class Arbiter<TApi> extends React.Component<ArbiterProps<TApi>, ArbiterSt
     const { loaded, modules, error } = this.state;
 
     if (typeof children === 'function') {
-      return children(loaded, modules, error);
+      return (children as ArbiterDisplay<TApi>)(loaded, modules, error);
     } else if (loaded) {
       return children;
     }
