@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "build": "tsc --project tsconfig.json",
-    "test:unit": "jest src",
+    "test:unit": "jest src --passWithNoTests",
     "test:watch": "npm run test:unit -- --watch",
     "test": "npm run lint && npm run test:unit",
     "prettier": "prettier --config prettier.config.js --write \"src/**/*.{ts,tsx}\"",

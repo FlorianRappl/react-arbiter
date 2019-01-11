@@ -70,6 +70,6 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
       return children;
     }
 
-    return null;
+    return false;
   }
 }

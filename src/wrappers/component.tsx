@@ -6,6 +6,7 @@ function createForeignComponentContainer<T>(contextTypes = ['router']) {
   return class ForeignComponentContainer extends React.Component<Partial<T>> {
     private container: HTMLElement | null;
     static contextTypes = contextTypes.reduce((ct, key) => {
+      // tslint:disable-next-line
       ct[key] = null;
       return ct;
     }, {});
