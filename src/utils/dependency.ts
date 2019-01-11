@@ -26,7 +26,11 @@ export function evalDependency<TApi>(name: string, content: string, dependencies
   return mod.exports;
 }
 
-export function compileDependency<TApi>(name: string, content: string, dependencies: AvailableDependencies): ModuleApp<TApi> {
+export function compileDependency<TApi>(
+  name: string,
+  content: string,
+  dependencies: AvailableDependencies,
+): ModuleApp<TApi> {
   const app = evalDependency<TApi>(name, content, dependencies);
 
   if (!app) {

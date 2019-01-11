@@ -33,4 +33,16 @@ export interface RenderCallback<T> {
   (element: HTMLElement, props: T, ctx: any): void;
 }
 
+export interface ArbiterDisplay<TApi> {
+  (loaded: boolean, modules: Array<Module<TApi>>, error?: any): React.ReactNode;
+}
+
+export interface ArbiterOptions<TApi> {
+  createApi(target: ModuleMetadata): TApi;
+  getModules(): Promise<Array<ModuleMetadata>>;
+  modules?: Array<Module<TApi>>;
+  fetchDependency?(url: string): Promise<string>;
+  dependencies?: AvailableDependencies;
+}
+
 export type ComponentDefinition<T> = ComponentType<T> | RenderCallback<T>;

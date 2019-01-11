@@ -1,76 +1,75 @@
 import * as React from 'react';
-import { ArbiterStasis } from './ArbiterStasis';
-import { RenderCallback, ComponentDefinition } from '../types';
+import { loadModule, setupModule, defaultFetchDependency } from '../utils';
+import { Module, ArbiterDisplay, ArbiterOptions } from '../types';
 
-class ForeignComponentContainer<T> extends React.Component<Partial<T>> {
-  private container: HTMLElement | null;
-  static contextTypes = {
-    // tslint:disable-next-line
-    router: null,
-  };
+export interface ArbiterRecallProps<TApi> extends ArbiterOptions<TApi> {
+  children?: React.ReactChild | ArbiterDisplay<TApi>;
+}
+
+export interface ArbiterState<TApi> {
+  loaded: boolean;
+  error?: any;
+  modules: Array<Module<TApi>>;
+}
+
+export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi>, ArbiterState<TApi>> {
+  private mounted = false;
+
+  constructor(props: ArbiterRecallProps<TApi>) {
+    super(props);
+    this.state = {
+      loaded: false,
+      modules: [],
+    };
+  }
+
+  private finish(modules: Array<Module<TApi>>, error: any) {
+    const { createApi } = this.props;
+
+    if (typeof createApi === 'function') {
+      for (const app of modules) {
+        const api = createApi(app);
+        setupModule(app, api);
+      }
+    } else {
+      console.warn('Invalid `createApi` prop. Skipping module installation.');
+    }
+
+    this.setState({
+      loaded: true,
+      error,
+      modules,
+    });
+  }
 
   componentDidMount() {
-    const node = this.container;
-    const ctx = this.context;
+    const { getModules, dependencies = {}, fetchDependency = defaultFetchDependency, modules = [] } = this.props;
+    this.mounted = true;
 
-    if (node) {
-      const { render, ...rest } = this.props as any;
-      render(node, rest, ctx);
+    if (typeof getModules === 'function') {
+      Promise.resolve(getModules())
+        .then(moduleData => Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, dependencies))))
+        .then(newModules => this.mounted && this.finish([...newModules, ...modules], undefined))
+        .catch(error => this.mounted && this.finish([], error));
+    } else {
+      console.error('Could not get the modules. Provide a valid `getModules` function as prop.');
     }
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   render() {
-    return (
-      <div
-        ref={node => {
-          this.container = node;
-        }}
-      />
-    );
-  }
-}
+    const { children } = this.props;
+    const { loaded, modules, error } = this.state;
 
-function wrapReactComponent<T>(Component: React.ComponentType<T>): React.ComponentType<T> {
-  return (props: T) => (
-    <ArbiterStasis>
-      <Component {...props} />
-    </ArbiterStasis>
-  );
-}
-
-function wrapForeignComponent<T>(render: RenderCallback<T>): React.ComponentType<T> {
-  return (props: T) => (
-    <ArbiterStasis>
-      <ForeignComponentContainer {...props} render={render} />
-    </ArbiterStasis>
-  );
-}
-
-export function wrapComponent<T>(value: ComponentDefinition<T>) {
-  if (value) {
-    const argAsReact = value as React.ComponentType<T>;
-    const argAsRender = value as RenderCallback<T>;
-    const argRender = argAsReact.prototype && argAsReact.prototype.render;
-
-    if (typeof argRender === 'function' || argAsReact.displayName) {
-      return wrapReactComponent(argAsReact);
+    if (typeof children === 'function') {
+      return (children as ArbiterDisplay<TApi>)(loaded, modules, error);
+    } else if (loaded) {
+      return children;
     }
 
-    return wrapForeignComponent(argAsRender);
-  } else {
-    console.error('The given value is not a valid component.');
-    return wrapForeignComponent<T>(() => {});
+    return null;
   }
-}
-
-export function wrapElement(content: React.ReactNode | HTMLElement): React.ReactChild {
-  if (content instanceof HTMLElement) {
-    return (
-      <ArbiterStasis>
-        <div ref={host => host && host.appendChild(content)} />
-      </ArbiterStasis>
-    );
-  }
-
-  return <ArbiterStasis>{content}</ArbiterStasis>;
 }
