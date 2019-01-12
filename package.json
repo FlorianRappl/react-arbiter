@@ -16,7 +16,14 @@
     "type": "git",
     "url": "git+https://github.com/FlorianRappl/react-arbiter.git"
   },
-  "keywords": ["react", "arbiter", "portal", "modules", "load", "spa"],
+  "keywords": [
+    "react",
+    "arbiter",
+    "portal",
+    "modules",
+    "load",
+    "spa"
+  ],
   "author": "Florian Rappl",
   "license": "MIT",
   "bugs": {
@@ -35,6 +42,7 @@
     "jest-cli": "^23.6.0",
     "prettier": "^1.15.3",
     "react": "^16.7.0",
+    "react-dom": "^16.7.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.12.0",
     "tslint-config-prettier": "^1.17.0",
