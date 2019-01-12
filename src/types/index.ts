@@ -38,10 +38,34 @@ export interface ArbiterDisplay<TApi> {
 }
 
 export interface ArbiterOptions<TApi> {
+  /**
+   * Creates an API for the given raw module.
+   * @param target The raw (meta) content of the module.
+   * @returns The API object to be used with the module.
+   */
   createApi(target: ModuleMetadata): TApi;
+  /**
+   * Gets the raw modules from (e.g., a server) asynchronously.
+   * @returns The promise yielding an array of raw modules.
+   */
   getModules(): Promise<Array<ModuleMetadata>>;
+  /**
+   * Optionally, some already existing evaluated modules, e.g.,
+   * helpful when debugging.
+   * @returns An array of evaluated modules.
+   */
   modules?: Array<Module<TApi>>;
+  /**
+   * Defines how other dependencies are fetched.
+   * @param url The URL to the dependency that should be fetched.
+   * @returns The promise yielding the dependency's content.
+   */
   fetchDependency?(url: string): Promise<string>;
+  /**
+   * Gets the map of globally available dependencies with their names
+   * as keys and their evaluated module content as value.
+   * @returns The optionally global dependencies.
+   */
   dependencies?: AvailableDependencies;
 }
 

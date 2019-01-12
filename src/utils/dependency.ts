@@ -10,6 +10,13 @@ function requireModule(name: string, dependencies: AvailableDependencies) {
   return dependency;
 }
 
+/**
+ * Compiles the given content from a generic dependency.
+ * @param name The name of the dependency to compile.
+ * @param content The content of the dependency to compile.
+ * @param dependencies The globally available dependencies.
+ * @returns The evaluated dependency.
+ */
 export function evalDependency<TApi>(name: string, content: string, dependencies: AvailableDependencies = {}) {
   const mod = {
     exports: {},
@@ -26,6 +33,13 @@ export function evalDependency<TApi>(name: string, content: string, dependencies
   return mod.exports;
 }
 
+/**
+ * Compiles the given content from a module with a dependency resolution.
+ * @param name The name of the dependency to compile.
+ * @param content The content of the dependency to compile.
+ * @param dependencies The globally available dependencies.
+ * @returns The evaluated module.
+ */
 export function compileDependency<TApi>(
   name: string,
   content: string,

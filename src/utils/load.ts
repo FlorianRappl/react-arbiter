@@ -42,6 +42,14 @@ function loadFromContent<TApi>(
   });
 }
 
+/**
+ * Loads the given raw module content by resolving its dependencies and
+ * evaluating the content.
+ * @param meta The raw module content as received from the server.
+ * @param fetchDependency The function to resolve a dependency.
+ * @param dependencies The already evaluated global dependencies.
+ * @returns A promise leading to the module content which has the metadata and a `setup` function.
+ */
 export function loadModule<TApi>(
   meta: ModuleMetadata,
   fetchDependency: DependencyFetcher,

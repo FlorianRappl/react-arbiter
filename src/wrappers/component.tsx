@@ -7,7 +7,7 @@ function createForeignComponentContainer<T>(contextTypes = ['router']) {
     private container: HTMLElement | null;
     static contextTypes = contextTypes.reduce((ct, key) => {
       // tslint:disable-next-line
-      ct[key] = null;
+      ct[key] = () => {};
       return ct;
     }, {});
 
@@ -33,37 +33,56 @@ function createForeignComponentContainer<T>(contextTypes = ['router']) {
   };
 }
 
-function wrapReactComponent<T>(Component: React.ComponentType<T>): React.ComponentType<T> {
-  return (props: T) => (
+function wrapReactComponent<T, K extends keyof T>(
+  Component: React.ComponentType<T>,
+  options?: Pick<T, K>,
+): React.ComponentType<Exclude<T, K>> {
+  return (props: Exclude<T, K>) => (
     <ArbiterStasis>
-      <Component {...props} />
+      <Component {...props} {...options} />
     </ArbiterStasis>
   );
 }
 
-function wrapForeignComponent<T>(render: RenderCallback<T>, contextTypes?: Array<string>): React.ComponentType<T> {
+function wrapForeignComponent<T, K extends keyof T>(
+  render: RenderCallback<T>,
+  options?: Pick<T, K>,
+  contextTypes?: Array<string>,
+): React.ComponentType<Exclude<T, K>> {
   const Component = createForeignComponentContainer<T>(contextTypes);
 
-  return (props: T) => (
+  return (props: Exclude<T, K>) => (
     <ArbiterStasis>
-      <Component {...props} render={render} />
+      <Component {...props} {...options} render={render} />
     </ArbiterStasis>
   );
 }
 
-export function wrapComponent<T>(value: ComponentDefinition<T>, contextTypes?: Array<string>) {
+/**
+ * Wraps the provided component (or rendering function) to a React component
+ * with automatic stasis usage.
+ * @param value The component value to wrap within a stasis.
+ * @param options The options to consider.
+ * @param contextTypes The available context types for non-React components.
+ * @returns A React component wrapping the value.
+ */
+export function wrapComponent<T, K extends keyof T>(
+  value: ComponentDefinition<T>,
+  options?: Pick<T, K>,
+  contextTypes?: Array<string>,
+) {
   if (value) {
     const argAsReact = value as React.ComponentType<T>;
     const argAsRender = value as RenderCallback<T>;
     const argRender = argAsReact.prototype && argAsReact.prototype.render;
 
     if (typeof argRender === 'function' || argAsReact.displayName) {
-      return wrapReactComponent(argAsReact);
+      return wrapReactComponent(argAsReact, options);
     }
 
-    return wrapForeignComponent(argAsRender, contextTypes);
+    return wrapForeignComponent(argAsRender, options, contextTypes);
   } else {
     console.error('The given value is not a valid component.');
-    return wrapForeignComponent<T>(() => {});
+    return wrapForeignComponent<T, K>(() => {});
   }
 }
