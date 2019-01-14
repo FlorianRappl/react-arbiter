@@ -8,8 +8,8 @@ export interface StasisProps {
 export function withStasis<TProps>(
   Component: React.ComponentType<TProps & StasisProps>,
   onError?: (error: Error) => void,
-) {
-  return (props: TProps & { children?: React.ReactNode }) => (
+): React.ComponentType<TProps> {
+  return props => (
     <ArbiterStasis onError={onError} renderError={error => <Component error={error} {...props} children={undefined} />}>
       {props.children}
     </ArbiterStasis>
