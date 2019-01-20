@@ -15,6 +15,8 @@ You need to have [Node](https://nodejs.org/) with NPM installed. In your reposit
 npm i react-arbiter
 ```
 
+### Recalling Modules
+
 In the simplest case you want to just use the `ArbiterRecall` without any loading special rendering while loading. For this use
 
 ```jsx
@@ -54,7 +56,63 @@ interface ModuleMetadata {
 
 This is similar to what the `package.json` looks like, however, containing three new elements: A hash representing the module, and either a link to the module's content (`link`) or the content directly (`content`).
 
-(tbd)
+### Component Stasis
+
+React Arbiter comes with a stasis field for third-party components. This is essentially just an error boundary that helps to prevent any external components destroying the whole application when crashing.
+
+```jsx
+const ProtectedComponent = (
+  <ArbiterStasis onError={e => console.error(e)}>
+    <MyCrashingComponent />
+  </ArbiterStasis>
+);
+```
+
+Furthermore, we can determine what to render when an error occurs:
+
+```jsx
+const ProtectedComponent = (
+  <ArbiterStasis renderError={e => <div>Display the error: {e.message}</div>}>
+    <MyCrashingComponent />
+  </ArbiterStasis>
+);
+```
+
+There is also a HOC to combine the `renderError` with the component to put into a stasis field.
+
+```jsx
+const MyStasis = withStasis(({ error, type }) => (
+  <div>
+    <h1>{type}</h1>
+    <p>Display the error: {error.message}</p>
+  </div>
+));
+const ProtectedComponent = (
+  <MyStasis type="Example">
+    <MyCrashingComponent />
+  </MyStasis>
+);
+```
+
+Besides the added `error` prop other props are being forwarded as expected (see, e.g., the `type` prop in the previous example).
+
+### Wrapping Components
+
+React Arbiter also gives you some utilities for wrapping components. For ordinary React components that means just placing them in a stasis field, however, for non-React components (referred to *foreign* components) we also introduce a React wrapper that hosts a DOM node for carrying the foreign component.
+
+```jsx
+const MyReactComponent = props => <div>{props.children}</div>;
+MyReactComponent.displayName = 'MyReactComponent';
+
+const MyForeignComponent = (element, props) => {
+  element.innerHTML = '<b>Hello World!</b>';
+};
+
+const WrappedReactComponent = wrapComponent(MyReactComponent);
+const WrappedForeignComponent = wrapComponent(MyForeignComponent);
+```
+
+Important: The `wrapComponent` only supports React SFCs if they have the `displayName` property properly set (see above). Otherwise, this helper function cannot distinguish between a foreign and a React component and will therefore choose the foreign component.
 
 ## License
 
