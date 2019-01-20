@@ -1,14 +1,7 @@
 import * as React from 'react';
+import { StasisOptions } from '../types';
 
-export interface ArbiterStasisProps {
-  /**
-   * Event emitted in case of an error.
-   */
-  onError?(error: Error): void;
-  /**
-   * Place a renderer here to customize the error output.
-   */
-  renderError?(error: Error): React.ReactNode;
+export interface ArbiterStasisProps extends StasisOptions {
   /**
    * The children to be placed in the stasis field.
    */

@@ -37,6 +37,17 @@ export interface ArbiterDisplay<TApi> {
   (loaded: boolean, modules: Array<Module<TApi>>, error?: any): React.ReactNode;
 }
 
+export interface StasisOptions {
+  /**
+   * Event emitted in case of an error.
+   */
+  onError?(error: Error): void;
+  /**
+   * Place a renderer here to customize the error output.
+   */
+  renderError?(error: Error): React.ReactNode;
+}
+
 export interface ArbiterOptions<TApi> {
   /**
    * Creates an API for the given raw module.
