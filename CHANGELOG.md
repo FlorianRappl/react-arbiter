@@ -1,5 +1,10 @@
 # React Arbiter Changelog
 
+## 0.3.0
+
+- Added examples to README
+- Improved API of `wrapComponent`
+
 ## 0.2.0
 
 - Added documentation comments

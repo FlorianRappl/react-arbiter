@@ -1,6 +1,6 @@
 {
   "name": "react-arbiter",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Recall all your modules to extend your SPA dynamically at runtime.",
   "main": "dist/index.js",
   "scripts": {
@@ -51,6 +51,6 @@
     "typescript": "^3.2.2"
   },
   "peerDependencies": {
-    "react": "16.x || 17.x"
+    "react": "16.x"
   }
 }
