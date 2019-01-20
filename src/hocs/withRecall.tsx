@@ -8,6 +8,12 @@ export interface RecallProps<TApi = {}> {
   error?: any;
 }
 
+/**
+ * Places a component inside a recall. The component is rendered once the recall
+ * state is changed.
+ * @param Component The component to render when the recall state changes.
+ * @param options The options for setting up the recall.
+ */
 export function withRecall<TProps, TApi>(
   Component: React.ComponentType<TProps & RecallProps<TApi>>,
   options: ArbiterOptions<TApi>,
