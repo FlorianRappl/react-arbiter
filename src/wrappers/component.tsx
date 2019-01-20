@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { ArbiterStasis } from '../components';
-import { RenderCallback, ComponentDefinition, StasisOptions } from '../types';
-
-type ComponentOptions<T> = Pick<Partial<T> & StasisOptions, Exclude<keyof T, keyof StasisOptions>>;
+import { RenderCallback, ComponentDefinition, StasisOptions, WrapOptions } from '../types';
 
 function createForeignComponentContainer<T>(contextTypes = ['router']) {
   return class ForeignComponentContainer extends React.Component<Partial<T>> {
@@ -35,10 +33,10 @@ function createForeignComponentContainer<T>(contextTypes = ['router']) {
   };
 }
 
-function wrapReactComponent<T, K extends keyof ComponentOptions<T>>(
+function wrapReactComponent<T, K extends keyof T>(
   Component: React.ComponentType<T>,
   stasisOptions: StasisOptions,
-  componentOptions: ComponentOptions<T>,
+  componentOptions: Pick<T, K>,
 ): React.ComponentType<Exclude<T, K>> {
   return (props: Exclude<T, K>) => (
     <ArbiterStasis {...stasisOptions}>
@@ -47,10 +45,10 @@ function wrapReactComponent<T, K extends keyof ComponentOptions<T>>(
   );
 }
 
-function wrapForeignComponent<T, K extends keyof ComponentOptions<T>>(
+function wrapForeignComponent<T, K extends keyof T>(
   render: RenderCallback<T>,
   stasisOptions: StasisOptions,
-  componentOptions: ComponentOptions<T>,
+  componentOptions: Pick<T, K>,
   contextTypes?: Array<string>,
 ): React.ComponentType<Exclude<T, K>> {
   const Component = createForeignComponentContainer<T>(contextTypes);
@@ -70,13 +68,8 @@ function wrapForeignComponent<T, K extends keyof ComponentOptions<T>>(
  * @param contextTypes The available context types for non-React components.
  * @returns A React component wrapping the value.
  */
-export function wrapComponent<T>(
-  value: ComponentDefinition<T>,
-  options: Partial<T> & StasisOptions = {},
-  contextTypes?: Array<string>,
-) {
-  const { onError, renderError, ...componentOptions } = options;
-  const stasisOptions: StasisOptions = { onError, renderError };
+export function wrapComponent<T, K extends keyof T>(value: ComponentDefinition<T>, options: WrapOptions<T, K> = {}) {
+  const { forwardProps = {}, contextTypes = [], ...stasisOptions } = options;
 
   if (value) {
     const argAsReact = value as React.ComponentType<T>;
@@ -84,12 +77,12 @@ export function wrapComponent<T>(
     const argRender = argAsReact.prototype && argAsReact.prototype.render;
 
     if (typeof argRender === 'function' || argAsReact.displayName) {
-      return wrapReactComponent(argAsReact, stasisOptions, componentOptions);
+      return wrapReactComponent(argAsReact, stasisOptions, forwardProps);
     }
 
-    return wrapForeignComponent(argAsRender, stasisOptions, componentOptions, contextTypes);
+    return wrapForeignComponent(argAsRender, stasisOptions, forwardProps, contextTypes);
   } else {
     console.error('The given value is not a valid component.');
-    return wrapForeignComponent(() => {}, stasisOptions, componentOptions, contextTypes);
+    return wrapForeignComponent(() => {}, stasisOptions, forwardProps, contextTypes);
   }
 }

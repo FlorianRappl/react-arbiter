@@ -27,13 +27,13 @@ export class ArbiterStasis extends React.Component<ArbiterStasisProps, ArbiterSt
   componentDidCatch(error: Error) {
     const { onError } = this.props;
 
-    this.setState({
-      error,
-    });
-
     if (typeof onError === 'function') {
       onError(error);
     }
+
+    this.setState({
+      error,
+    });
   }
 
   render() {

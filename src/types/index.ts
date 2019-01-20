@@ -48,6 +48,18 @@ export interface StasisOptions {
   renderError?(error: Error): React.ReactNode;
 }
 
+export interface WrapOptions<T, K extends keyof T> extends StasisOptions {
+  /**
+   * The optional props to be forwarded (i.e., captured) to the wrapped
+   * component.
+   */
+  forwardProps?: Pick<T, K>;
+  /**
+   * The optional contextTypes to consider for wrapping foreign components.
+   */
+  contextTypes?: Array<string>;
+}
+
 export interface ArbiterOptions<TApi> {
   /**
    * Creates an API for the given raw module.
