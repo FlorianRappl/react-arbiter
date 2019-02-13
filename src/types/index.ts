@@ -90,7 +90,15 @@ export interface ArbiterModuleFetcher {
    * Gets the raw modules from (e.g., a server) asynchronously.
    * @returns The promise yielding an array of raw modules.
    */
-  (): Promise<Array<ArbiterModuleMetadata>>;
+  (cachedModules: Array<ArbiterModuleMetadata>): Promise<Array<ArbiterModuleMetadata>>;
+}
+
+export interface ArbiterModuleCache {
+  update(
+    cachedModules: Array<ArbiterModuleMetadata>,
+    receivedModules: Array<ArbiterModuleMetadata>,
+  ): Promise<Array<ArbiterModuleMetadata>>;
+  retrieve(): Promise<Array<ArbiterModuleMetadata>>;
 }
 
 export interface AvailableDependencies {
@@ -157,6 +165,11 @@ export interface ArbiterOptions<TApi> {
    * as keys and their evaluated module content as value.
    */
   dependencies?: AvailableDependencies;
+  /**
+   * Optionally uses the defined cache. For a default implementation
+   * use the `openCache` method, which is based on IndexDB.
+   */
+  cache?: ArbiterModuleCache;
 }
 
 export type ComponentDefinition<T> = ComponentType<T> | RenderCallback<T>;

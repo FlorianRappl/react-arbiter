@@ -1,10 +1,25 @@
 import { loadModule } from './load';
 import { defaultFetchDependency } from './fetch';
 import { setupModule } from './setup';
-import { AvailableDependencies, ArbiterModule, DependencyGetter, ApiCreator, ArbiterModuleFetcher } from '../types';
+import {
+  AvailableDependencies,
+  ArbiterModule,
+  DependencyGetter,
+  ApiCreator,
+  ArbiterModuleFetcher,
+  ArbiterModuleCache,
+} from '../types';
 
 const defaultGlobalDependencies: AvailableDependencies = {};
 const defaultGetDependencies: DependencyGetter = () => false;
+const defaultCache: ArbiterModuleCache = {
+  retrieve() {
+    return Promise.resolve([]);
+  },
+  update(_, received) {
+    return Promise.resolve(received);
+  },
+};
 
 /**
  * Loads the modules by first getting them, then evaluating the raw content.
@@ -18,13 +33,17 @@ export function loadModules<TApi>(
   fetchDependency = defaultFetchDependency,
   globalDependencies = defaultGlobalDependencies,
   getLocalDependencies = defaultGetDependencies,
-) {
+  cache = defaultCache,
+): Promise<Array<ArbiterModule<TApi>>> {
   if (typeof fetchModules === 'function') {
     const getDependencies: DependencyGetter = target => {
       return getLocalDependencies(target) || globalDependencies;
     };
-    return Promise.resolve(fetchModules()).then(moduleData =>
-      Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, getDependencies))),
+
+    return Promise.resolve(cache.retrieve()).then(cachedModules =>
+      Promise.resolve(fetchModules(cachedModules || []))
+        .then(receivedModules => cache.update(cachedModules, receivedModules))
+        .then(moduleData => Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, getDependencies)))),
     );
   } else {
     console.error('Could not get the modules. Provide a valid `getModules` function as prop.');
