@@ -10,6 +10,6 @@ export function setupModule<TApi>(app: ArbiterModule<TApi>, api: TApi) {
   try {
     app.setup(api);
   } catch (e) {
-    console.error(`Error while setting up ${app.name}.`, e);
+    console.error(`Error while setting up ${app && app.name}.`, e);
   }
 }
