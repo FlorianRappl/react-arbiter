@@ -7,13 +7,20 @@ import {
   DependencyGetter,
 } from '../types';
 
+function createEmptyModule(meta: ArbiterModuleMetadata) {
+  return {
+    ...meta,
+    setup() {},
+  };
+}
+
 function loadDependencies(
   meta: ArbiterModuleMetadata,
   fetchDependency: DependencyFetcher,
   getDependencies: DependencyGetter,
 ): Promise<AvailableDependencies> {
   const dependencies = {
-    ...getDependencies(),
+    ...(getDependencies() || {}),
   };
   const existingDependencies = Object.keys(dependencies);
   const dependencyMap = Object.keys(meta.dependencies || {})
@@ -39,13 +46,19 @@ function loadFromContent<TApi>(
   fetchDependency: DependencyFetcher,
   getDependencies: DependencyGetter,
 ): Promise<ArbiterModule<TApi>> {
-  return loadDependencies(meta, fetchDependency, getDependencies).then(dependencies => {
-    const app = compileDependency<TApi>(meta.name, content, dependencies);
-    return {
-      ...app,
-      ...meta,
-    };
-  });
+  return loadDependencies(meta, fetchDependency, getDependencies).then(
+    dependencies => {
+      const app = compileDependency<TApi>(meta.name, content, dependencies);
+      return {
+        ...app,
+        ...meta,
+      };
+    },
+    error => {
+      console.error(`Could not load the dependencies of ${meta.name}.`, error);
+      return createEmptyModule(meta);
+    },
+  );
 }
 
 /**
@@ -73,8 +86,5 @@ export function loadModule<TApi>(
     console.warn('Empty module found!', meta.name);
   }
 
-  return Promise.resolve({
-    ...meta,
-    setup() {},
-  });
+  return Promise.resolve(createEmptyModule(meta));
 }
