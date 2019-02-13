@@ -3,10 +3,7 @@ import { render } from 'react-dom';
 import StasisExample from './stasis';
 import RecallExample from './recall';
 
-const examples = [
-  StasisExample,
-  RecallExample,
-];
+const examples = [StasisExample, RecallExample];
 
 const App: React.SFC = () => (
   <div>
@@ -15,7 +12,7 @@ const App: React.SFC = () => (
       <li>Stasis</li>
       <li>Recall</li>
     </ul>
-    <div></div>
+    <div />
   </div>
 );
 

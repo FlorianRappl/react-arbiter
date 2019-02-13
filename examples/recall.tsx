@@ -24,7 +24,7 @@ const Arbiter = withRecall(DisplayModules, {
   createApi(meta) {
     return { id: meta.name };
   },
-  getModules() {
+  fetchModules() {
     return new Promise(resolve =>
       setTimeout(
         () =>
