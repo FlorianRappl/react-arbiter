@@ -44,10 +44,12 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
     const { fetchModules, dependencies, getDependencies, fetchDependency } = this.props;
     this.mounted = true;
 
-    loadModules(fetchModules, fetchDependency, dependencies, getDependencies).then(
-      modules => this.mounted && this.finish(undefined, modules),
-      error => this.mounted && this.finish(error, []),
-    );
+    if (typeof fetchModules === 'function') {
+      loadModules(fetchModules, fetchDependency, dependencies, getDependencies).then(
+        modules => this.mounted && this.finish(undefined, modules),
+        error => this.mounted && this.finish(error, []),
+      );
+    }
   }
 
   componentWillUnmount() {

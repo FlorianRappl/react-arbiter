@@ -1,29 +1,29 @@
 import { loadModule } from './load';
 import { defaultFetchDependency } from './fetch';
 import { setupModule } from './setup';
-import { ArbiterModuleMetadata, AvailableDependencies, ArbiterModule, DependencyGetter } from '../types';
+import { AvailableDependencies, ArbiterModule, DependencyGetter, ApiCreator, ArbiterModuleFetcher } from '../types';
 
 const defaultGlobalDependencies: AvailableDependencies = {};
 const defaultGetDependencies: DependencyGetter = () => false;
 
 /**
  * Loads the modules by first getting them, then evaluating the raw content.
- * @param getModules The function to resolve the modules.
+ * @param fetchModules The function to resolve the modules.
  * @param fetchDependency A function to fetch the dependencies. By default, `fetch` is used.
  * @param dependencies The availablly global dependencies, if any.
  * @returns A promise leading to the evaluated modules.
  */
 export function loadModules<TApi>(
-  getModules: () => Promise<Array<ArbiterModuleMetadata>>,
+  fetchModules: ArbiterModuleFetcher,
   fetchDependency = defaultFetchDependency,
   globalDependencies = defaultGlobalDependencies,
   getLocalDependencies = defaultGetDependencies,
 ) {
-  if (typeof getModules === 'function') {
-    const getDependencies: DependencyGetter = () => {
-      return getLocalDependencies() || globalDependencies;
+  if (typeof fetchModules === 'function') {
+    const getDependencies: DependencyGetter = target => {
+      return getLocalDependencies(target) || globalDependencies;
     };
-    return Promise.resolve(getModules()).then(moduleData =>
+    return Promise.resolve(fetchModules()).then(moduleData =>
       Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, getDependencies))),
     );
   } else {
@@ -38,10 +38,7 @@ export function loadModules<TApi>(
  * @param modules The available evaluated modules.
  * @returns The integrated modules.
  */
-export function setupModules<TApi>(
-  createApi: (target: ArbiterModuleMetadata) => TApi,
-  modules: Array<ArbiterModule<TApi>>,
-) {
+export function setupModules<TApi>(createApi: ApiCreator<TApi>, modules: Array<ArbiterModule<TApi>>) {
   if (typeof createApi === 'function') {
     for (const app of modules) {
       const api = createApi(app);

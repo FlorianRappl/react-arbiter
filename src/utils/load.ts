@@ -20,7 +20,7 @@ function loadDependencies(
   getDependencies: DependencyGetter,
 ): Promise<AvailableDependencies> {
   const dependencies = {
-    ...(getDependencies() || {}),
+    ...(getDependencies(meta) || {}),
   };
   const existingDependencies = Object.keys(dependencies);
   const dependencyMap = Object.keys(meta.dependencies || {})
