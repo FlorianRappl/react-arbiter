@@ -1,6 +1,6 @@
 import { setupModule } from './setup';
 
-describe('setupMoule', () => {
+describe('Setting up Modules', () => {
   it('works if setup is available', () => {
     const setupMock = jest.fn();
     console.error = jest.fn();
