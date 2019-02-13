@@ -1,6 +1,6 @@
 {
   "name": "react-arbiter",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Recall all your modules to extend your SPA dynamically at runtime.",
   "main": "dist/index.js",
   "scripts": {
@@ -31,24 +31,24 @@
   },
   "homepage": "https://github.com/FlorianRappl/react-arbiter#readme",
   "devDependencies": {
-    "@types/enzyme": "^3.1.15",
+    "@types/enzyme": "^3.1.17",
     "@types/enzyme-adapter-react-16": "^1.0.3",
-    "@types/jest": "^23.3.12",
-    "@types/react": "^16.7.18",
-    "@types/react-dom": "^16.0.11",
+    "@types/jest": "^24.0.3",
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
     "enzyme": "^3.8.0",
-    "enzyme-adapter-react-16": "^1.7.1",
+    "enzyme-adapter-react-16": "^1.9.1",
     "enzyme-to-json": "^3.3.5",
-    "jest": "^23.6.0",
-    "jest-cli": "^23.6.0",
-    "prettier": "^1.15.3",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
+    "jest": "^24.1.0",
+    "jest-cli": "^24.1.0",
+    "prettier": "^1.16.4",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
     "ts-jest": "^23.10.5",
-    "tslint": "^5.12.0",
-    "tslint-config-prettier": "^1.17.0",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.2.2"
+    "typescript": "^3.3.3"
   },
   "peerDependencies": {
     "react": "16.x"

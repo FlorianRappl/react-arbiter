@@ -1,5 +1,12 @@
 # React Arbiter Changelog
 
+## 0.4.0
+
+- Improved documentation
+- Renamed types to avoid clashes
+- Renamed `getModules` to `fetchModules`
+- Added `getDependencies` prop
+
 ## 0.3.0
 
 - Added examples to README
