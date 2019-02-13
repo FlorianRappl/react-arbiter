@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { setupModules, loadModules } from '../utils';
-import { Module, ArbiterDisplay, ArbiterOptions } from '../types';
+import { ArbiterModule, ArbiterDisplay, ArbiterOptions } from '../types';
 
 export interface ArbiterRecallProps<TApi> extends ArbiterOptions<TApi> {
   /**
@@ -13,7 +13,7 @@ export interface ArbiterRecallProps<TApi> extends ArbiterOptions<TApi> {
 export interface ArbiterState<TApi> {
   loaded: boolean;
   error?: any;
-  modules: Array<Module<TApi>>;
+  modules: Array<ArbiterModule<TApi>>;
 }
 
 /**
@@ -30,7 +30,7 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
     };
   }
 
-  private finish(error: any, newModules: Array<Module<TApi>>) {
+  private finish(error: any, newModules: Array<ArbiterModule<TApi>>) {
     const { createApi, modules: oldModules = [] } = this.props;
 
     this.setState({
@@ -41,7 +41,7 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
   }
 
   componentDidMount() {
-    const { getModules, dependencies, fetchDependency } = this.props;
+    const { fetchModules: getModules, dependencies, fetchDependency } = this.props;
     this.mounted = true;
 
     loadModules(getModules, fetchDependency, dependencies).then(

@@ -1,4 +1,4 @@
-import { Module } from '../types';
+import { ArbiterModule } from '../types';
 
 /**
  * Sets up the given module by calling the exported `setup` function
@@ -6,7 +6,7 @@ import { Module } from '../types';
  * @param app The module's evaluated content.
  * @param api The generated API for the module.
  */
-export function setupModule<TApi>(app: Module<TApi>, api: TApi) {
+export function setupModule<TApi>(app: ArbiterModule<TApi>, api: TApi) {
   try {
     app.setup(api);
   } catch (e) {

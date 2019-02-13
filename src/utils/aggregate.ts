@@ -1,4 +1,4 @@
-import { ModuleMetadata, AvailableDependencies, Module } from '../types';
+import { ArbiterModuleMetadata, AvailableDependencies, ArbiterModule } from '../types';
 import { loadModule } from './load';
 import { defaultFetchDependency } from './fetch';
 import { setupModule } from './setup';
@@ -11,7 +11,7 @@ import { setupModule } from './setup';
  * @returns A promise leading to the evaluated modules.
  */
 export function loadModules<TApi>(
-  getModules: () => Promise<Array<ModuleMetadata>>,
+  getModules: () => Promise<Array<ArbiterModuleMetadata>>,
   fetchDependency = defaultFetchDependency,
   dependencies: AvailableDependencies = {},
 ) {
@@ -31,7 +31,10 @@ export function loadModules<TApi>(
  * @param modules The available evaluated modules.
  * @returns The integrated modules.
  */
-export function setupModules<TApi>(createApi: (target: ModuleMetadata) => TApi, modules: Array<Module<TApi>>) {
+export function setupModules<TApi>(
+  createApi: (target: ArbiterModuleMetadata) => TApi,
+  modules: Array<ArbiterModule<TApi>>,
+) {
   if (typeof createApi === 'function') {
     for (const app of modules) {
       const api = createApi(app);

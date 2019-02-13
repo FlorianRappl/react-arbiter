@@ -1,4 +1,4 @@
-import { ModuleApp, AvailableDependencies, ModuleExports } from '../types';
+import { ArbiterModuleApp, AvailableDependencies, ArbiterModuleExports } from '../types';
 
 function requireModule(name: string, dependencies: AvailableDependencies) {
   const dependency = dependencies[name];
@@ -20,7 +20,7 @@ function requireModule(name: string, dependencies: AvailableDependencies) {
 export function evalDependency<TApi>(name: string, content: string, dependencies: AvailableDependencies = {}) {
   const mod = {
     exports: {},
-  } as ModuleExports<TApi>;
+  } as ArbiterModuleExports<TApi>;
   const require = (moduleName: string) => requireModule(moduleName, dependencies);
 
   try {
@@ -44,7 +44,7 @@ export function compileDependency<TApi>(
   name: string,
   content: string,
   dependencies: AvailableDependencies,
-): ModuleApp<TApi> {
+): ArbiterModuleApp<TApi> {
   const app = evalDependency<TApi>(name, content, dependencies);
 
   if (!app) {

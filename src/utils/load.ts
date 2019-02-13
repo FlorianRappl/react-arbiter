@@ -1,8 +1,8 @@
 import { evalDependency, compileDependency } from './dependency';
-import { ModuleMetadata, Module, DependencyFetcher, AvailableDependencies } from '../types';
+import { ArbiterModuleMetadata, ArbiterModule, DependencyFetcher, AvailableDependencies } from '../types';
 
 function loadDependencies(
-  meta: ModuleMetadata,
+  meta: ArbiterModuleMetadata,
   fetchDependency: DependencyFetcher,
   globalDependencies: AvailableDependencies,
 ): Promise<AvailableDependencies> {
@@ -28,11 +28,11 @@ function loadDependencies(
 }
 
 function loadFromContent<TApi>(
-  meta: ModuleMetadata,
+  meta: ArbiterModuleMetadata,
   content: string,
   fetchDependency: DependencyFetcher,
   dependencies: AvailableDependencies,
-): Promise<Module<TApi>> {
+): Promise<ArbiterModule<TApi>> {
   return loadDependencies(meta, fetchDependency, dependencies).then(dependencies => {
     const app = compileDependency<TApi>(meta.name, content, dependencies);
     return {
@@ -51,10 +51,10 @@ function loadFromContent<TApi>(
  * @returns A promise leading to the module content which has the metadata and a `setup` function.
  */
 export function loadModule<TApi>(
-  meta: ModuleMetadata,
+  meta: ArbiterModuleMetadata,
   fetchDependency: DependencyFetcher,
   dependencies: AvailableDependencies,
-): Promise<Module<TApi>> {
+): Promise<ArbiterModule<TApi>> {
   const { link, content } = meta;
 
   if (link) {

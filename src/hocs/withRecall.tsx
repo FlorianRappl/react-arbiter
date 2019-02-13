@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ArbiterRecall } from '../components';
-import { Module, ArbiterOptions } from '../types';
+import { ArbiterModule, ArbiterOptions } from '../types';
 
 export interface RecallProps<TApi = {}> {
   loaded?: boolean;
-  modules?: Array<Module<TApi>>;
+  modules?: Array<ArbiterModule<TApi>>;
   error?: any;
 }
 

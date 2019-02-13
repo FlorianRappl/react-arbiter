@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 
-export interface ModuleMetadata {
+export interface ArbiterModuleMetadata {
   version: string;
   name: string;
   dependencies: {
@@ -11,15 +11,15 @@ export interface ModuleMetadata {
   hash: string;
 }
 
-export interface ModuleApp<TApi> {
+export interface ArbiterModuleApp<TApi> {
   setup(portal: TApi): void;
 }
 
-export interface ModuleExports<TApi> {
-  exports: ModuleApp<TApi> | undefined;
+export interface ArbiterModuleExports<TApi> {
+  exports: ArbiterModuleApp<TApi> | undefined;
 }
 
-export type Module<TApi> = ModuleApp<TApi> & ModuleMetadata;
+export type ArbiterModule<TApi> = ArbiterModuleApp<TApi> & ArbiterModuleMetadata;
 
 export interface DependencyFetcher {
   (url: string): Promise<string>;
@@ -34,7 +34,7 @@ export interface RenderCallback<T> {
 }
 
 export interface ArbiterDisplay<TApi> {
-  (loaded: boolean, modules: Array<Module<TApi>>, error?: any): React.ReactNode;
+  (loaded: boolean, modules: Array<ArbiterModule<TApi>>, error?: any): React.ReactNode;
 }
 
 export interface StasisOptions {
@@ -66,24 +66,32 @@ export interface ArbiterOptions<TApi> {
    * @param target The raw (meta) content of the module.
    * @returns The API object to be used with the module.
    */
-  createApi(target: ModuleMetadata): TApi;
+  createApi(target: ArbiterModuleMetadata): TApi;
   /**
    * Gets the raw modules from (e.g., a server) asynchronously.
    * @returns The promise yielding an array of raw modules.
    */
-  getModules(): Promise<Array<ModuleMetadata>>;
+  fetchModules(): Promise<Array<ArbiterModuleMetadata>>;
   /**
    * Optionally, some already existing evaluated modules, e.g.,
    * helpful when debugging.
    * @returns An array of evaluated modules.
    */
-  modules?: Array<Module<TApi>>;
+  modules?: Array<ArbiterModule<TApi>>;
   /**
    * Defines how other dependencies are fetched.
    * @param url The URL to the dependency that should be fetched.
    * @returns The promise yielding the dependency's content.
    */
   fetchDependency?(url: string): Promise<string>;
+  /**
+   * Gets the locally available dependencies for the specified
+   * module. If this function is missing or returns false or undefined
+   * the globally available dependencies will be used.
+   * @returns The dependencies that should be used for evaluating the
+   * module.
+   */
+  getDependencies?(): AvailableDependencies | undefined | false;
   /**
    * Gets the map of globally available dependencies with their names
    * as keys and their evaluated module content as value.
