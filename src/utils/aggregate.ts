@@ -1,7 +1,10 @@
-import { ArbiterModuleMetadata, AvailableDependencies, ArbiterModule } from '../types';
 import { loadModule } from './load';
 import { defaultFetchDependency } from './fetch';
 import { setupModule } from './setup';
+import { ArbiterModuleMetadata, AvailableDependencies, ArbiterModule, DependencyGetter } from '../types';
+
+const defaultGlobalDependencies: AvailableDependencies = {};
+const defaultGetDependencies: DependencyGetter = () => false;
 
 /**
  * Loads the modules by first getting them, then evaluating the raw content.
@@ -13,11 +16,15 @@ import { setupModule } from './setup';
 export function loadModules<TApi>(
   getModules: () => Promise<Array<ArbiterModuleMetadata>>,
   fetchDependency = defaultFetchDependency,
-  dependencies: AvailableDependencies = {},
+  globalDependencies = defaultGlobalDependencies,
+  getLocalDependencies = defaultGetDependencies,
 ) {
   if (typeof getModules === 'function') {
+    const getDependencies: DependencyGetter = () => {
+      return getLocalDependencies() || globalDependencies;
+    };
     return Promise.resolve(getModules()).then(moduleData =>
-      Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, dependencies))),
+      Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, getDependencies))),
     );
   } else {
     console.error('Could not get the modules. Provide a valid `getModules` function as prop.');

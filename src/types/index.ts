@@ -12,7 +12,7 @@ export interface ArbiterModuleMetadata {
 }
 
 export interface ArbiterModuleApp<TApi> {
-  setup(portal: TApi): void;
+  setup(api: TApi): void;
 }
 
 export interface ArbiterModuleExports<TApi> {
@@ -23,6 +23,10 @@ export type ArbiterModule<TApi> = ArbiterModuleApp<TApi> & ArbiterModuleMetadata
 
 export interface DependencyFetcher {
   (url: string): Promise<string>;
+}
+
+export interface DependencyGetter {
+  (): AvailableDependencies | undefined | false;
 }
 
 export interface AvailableDependencies {
@@ -91,7 +95,7 @@ export interface ArbiterOptions<TApi> {
    * @returns The dependencies that should be used for evaluating the
    * module.
    */
-  getDependencies?(): AvailableDependencies | undefined | false;
+  getDependencies?: DependencyGetter;
   /**
    * Gets the map of globally available dependencies with their names
    * as keys and their evaluated module content as value.

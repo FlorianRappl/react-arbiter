@@ -1,13 +1,19 @@
 import { evalDependency, compileDependency } from './dependency';
-import { ArbiterModuleMetadata, ArbiterModule, DependencyFetcher, AvailableDependencies } from '../types';
+import {
+  ArbiterModuleMetadata,
+  ArbiterModule,
+  DependencyFetcher,
+  AvailableDependencies,
+  DependencyGetter,
+} from '../types';
 
 function loadDependencies(
   meta: ArbiterModuleMetadata,
   fetchDependency: DependencyFetcher,
-  globalDependencies: AvailableDependencies,
+  getDependencies: DependencyGetter,
 ): Promise<AvailableDependencies> {
   const dependencies = {
-    ...globalDependencies,
+    ...getDependencies(),
   };
   const existingDependencies = Object.keys(dependencies);
   const dependencyMap = Object.keys(meta.dependencies || {})
@@ -31,9 +37,9 @@ function loadFromContent<TApi>(
   meta: ArbiterModuleMetadata,
   content: string,
   fetchDependency: DependencyFetcher,
-  dependencies: AvailableDependencies,
+  getDependencies: DependencyGetter,
 ): Promise<ArbiterModule<TApi>> {
-  return loadDependencies(meta, fetchDependency, dependencies).then(dependencies => {
+  return loadDependencies(meta, fetchDependency, getDependencies).then(dependencies => {
     const app = compileDependency<TApi>(meta.name, content, dependencies);
     return {
       ...app,
@@ -53,14 +59,16 @@ function loadFromContent<TApi>(
 export function loadModule<TApi>(
   meta: ArbiterModuleMetadata,
   fetchDependency: DependencyFetcher,
-  dependencies: AvailableDependencies,
+  getDependencies: DependencyGetter,
 ): Promise<ArbiterModule<TApi>> {
   const { link, content } = meta;
 
   if (link) {
-    return fetchDependency(link).then(content => loadFromContent<TApi>(meta, content, fetchDependency, dependencies));
+    return fetchDependency(link).then(content =>
+      loadFromContent<TApi>(meta, content, fetchDependency, getDependencies),
+    );
   } else if (content) {
-    return loadFromContent<TApi>(meta, content, fetchDependency, dependencies);
+    return loadFromContent<TApi>(meta, content, fetchDependency, getDependencies);
   } else {
     console.warn('Empty module found!', meta.name);
   }
