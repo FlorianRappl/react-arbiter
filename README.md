@@ -27,13 +27,13 @@ function createApi(moduleMeta) {
   return {};
 }
 
-function getModules() {
+function fetchModules() {
   //get a list of the available modules, potentially with content
   return fetch('/your/modules');
 }
 
 const App = (
-  <ArbiterRecall createApi={createApi} getModules={getModules}>
+  <ArbiterRecall createApi={createApi} fetchModules={fetchModules}>
     <YourComponent />
   </ArbiterRecall>
 );
@@ -42,7 +42,7 @@ const App = (
 A module comes with the following interface:
 
 ```ts
-interface ModuleMetadata {
+interface ArbiterModuleMetadata {
   version: string;
   name: string;
   dependencies: {
@@ -112,7 +112,7 @@ const WrappedReactComponent = wrapComponent(MyReactComponent);
 const WrappedForeignComponent = wrapComponent(MyForeignComponent);
 ```
 
-Important: The `wrapComponent` only supports React SFCs if they have the `displayName` property properly set (see above). Otherwise, this helper function cannot distinguish between a foreign and a React component and will therefore choose the foreign component.
+**Important**: The `wrapComponent` only supports React SFCs if they have the `displayName` property properly set (see above). Otherwise, this helper function cannot distinguish between a foreign and a React component and will therefore choose the foreign component.
 
 ## License
 

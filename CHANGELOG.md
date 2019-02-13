@@ -6,6 +6,7 @@
 - Renamed types to avoid clashes
 - Renamed `getModules` to `fetchModules`
 - Added `getDependencies` prop
+- Added `openCache` utility
 
 ## 0.3.0
 
