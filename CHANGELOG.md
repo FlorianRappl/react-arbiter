@@ -1,5 +1,10 @@
 # React Arbiter Changelog
 
+## 0.4.1
+
+- Improved typings
+- Added new `wrapper` option for `wrapElement`
+
 ## 0.4.0
 
 - Improved documentation

@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, Ref } from 'react';
 
 export interface ArbiterModuleMetadata {
   /**
@@ -124,16 +124,24 @@ export interface StasisOptions {
   renderError?(error: Error): React.ReactNode;
 }
 
-export interface WrapOptions<T, K extends keyof T> extends StasisOptions {
+export interface WrapComponentOptions<T> extends StasisOptions {
   /**
    * The optional props to be forwarded (i.e., captured) to the wrapped
    * component.
    */
-  forwardProps?: Pick<T, K>;
+  forwardProps?: T;
   /**
    * The optional contextTypes to consider for wrapping foreign components.
    */
   contextTypes?: Array<string>;
+}
+
+export interface WrapElementOptions extends StasisOptions {
+  /**
+   * Defines the wrapper (i.e., host) element to be used for wrapping HTML
+   * elements. The HTML element is forwarded via the ref.
+   */
+  wrapper?: ComponentType<{ ref: Ref<HTMLElement> }> | string;
 }
 
 export interface ArbiterOptions<TApi> {

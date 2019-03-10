@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArbiterStasis } from '../components';
-import { StasisOptions } from '../types';
+import { WrapElementOptions } from '../types';
 
 /**
  * Wraps the given node in a stasis. If a plain HTML element is provided
@@ -9,11 +9,20 @@ import { StasisOptions } from '../types';
  * @param options The options to consider.
  * @returns A React node wrapping the content.
  */
-export function wrapElement(content: React.ReactNode | HTMLElement, options: StasisOptions = {}): React.ReactChild {
+export function wrapElement(
+  content: React.ReactNode | HTMLElement,
+  options: WrapElementOptions = {},
+): React.ReactChild {
+  const { wrapper = 'div', ...stasisOptions } = options;
+
   if (content instanceof HTMLElement) {
     const htmlNode = content;
-    content = <div ref={host => host && host.appendChild(htmlNode)} />;
+    content = React.createElement(wrapper, {
+      ref(host: HTMLElement) {
+        host && host.appendChild(htmlNode);
+      },
+    });
   }
 
-  return <ArbiterStasis {...options}>{content}</ArbiterStasis>;
+  return <ArbiterStasis {...stasisOptions}>{content}</ArbiterStasis>;
 }
