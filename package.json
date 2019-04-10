@@ -1,6 +1,6 @@
 {
   "name": "react-arbiter",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Recall all your modules to extend your SPA dynamically at runtime.",
   "main": "dist/index.js",
   "scripts": {

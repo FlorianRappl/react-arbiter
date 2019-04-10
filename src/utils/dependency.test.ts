@@ -38,9 +38,8 @@ describe('Handling Dependencies', () => {
       'var log = require("test"); module.exports = { setup: function(api) { log(api, "Module A"); } }',
       {},
     );
-    expect(result.setup).not.toBeUndefined();
+    expect(result.setup).toBeUndefined();
     expect(() => result.setup(undefined)).toThrow();
-    expect(console.error).toHaveBeenCalledTimes(1);
   });
 
   it('handles a proper UMD module with no sub-dependencies', () => {

@@ -4,7 +4,9 @@ function requireModule(name: string, dependencies: AvailableDependencies) {
   const dependency = dependencies[name];
 
   if (!dependency) {
-    console.error('Cannot find the required module!', name, dependencies);
+    const error = new Error(`Cannot find module '${name}'`);
+    (error as any).code = 'MODULE_NOT_FOUND';
+    throw error;
   }
 
   return dependency;
