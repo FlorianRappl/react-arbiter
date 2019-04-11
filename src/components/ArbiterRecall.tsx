@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { setupModules, loadModules } from '../utils';
+import { setupModules, loadModules, isfunc } from '../utils';
 import { ArbiterModule, ArbiterDisplay, ArbiterOptions } from '../types';
 
 export interface ArbiterRecallProps<TApi> extends ArbiterOptions<TApi> {
@@ -44,7 +44,7 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
     const { fetchModules, dependencies, getDependencies, fetchDependency, cache } = this.props;
     this.mounted = true;
 
-    if (typeof fetchModules === 'function') {
+    if (isfunc(fetchModules)) {
       loadModules(fetchModules, fetchDependency, dependencies, getDependencies, cache).then(
         modules => this.mounted && this.finish(undefined, modules),
         error => this.mounted && this.finish(error, []),
@@ -60,7 +60,7 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
     const { children } = this.props;
     const { loaded, modules, error } = this.state;
 
-    if (typeof children === 'function') {
+    if (isfunc(children)) {
       return (children as ArbiterDisplay<TApi>)(loaded, modules, error);
     } else if (loaded) {
       return children;

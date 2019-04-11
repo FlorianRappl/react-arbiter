@@ -1,6 +1,7 @@
 import { loadModule } from './load';
 import { defaultFetchDependency } from './fetch';
 import { setupModule } from './setup';
+import { isfunc } from './isfunc';
 import {
   AvailableDependencies,
   ArbiterModule,
@@ -35,7 +36,7 @@ export function loadModules<TApi>(
   getLocalDependencies = defaultGetDependencies,
   cache = defaultCache,
 ): Promise<Array<ArbiterModule<TApi>>> {
-  if (typeof fetchModules === 'function') {
+  if (isfunc(fetchModules)) {
     const getDependencies: DependencyGetter = target => {
       return getLocalDependencies(target) || globalDependencies;
     };
@@ -58,7 +59,7 @@ export function loadModules<TApi>(
  * @returns The integrated modules.
  */
 export function setupModules<TApi>(createApi: ApiCreator<TApi>, modules: Array<ArbiterModule<TApi>>) {
-  if (typeof createApi === 'function') {
+  if (isfunc(createApi)) {
     for (const app of modules) {
       const api = createApi(app);
       setupModule(app, api);

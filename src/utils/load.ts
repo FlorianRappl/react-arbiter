@@ -33,7 +33,7 @@ function loadDependencies(
 
   return Promise.all(dependencyMap.map(m => fetchDependency(m.url).then(c => (m.content = c)))).then(() => {
     for (const item of dependencyMap) {
-      dependencies[item.name] = evalDependency(item.name, item.content, dependencies);
+      dependencies[item.name] = evalDependency(item.name, item.content, item.url, dependencies);
     }
 
     return dependencies;
@@ -45,10 +45,11 @@ function loadFromContent<TApi>(
   content: string,
   fetchDependency: DependencyFetcher,
   getDependencies: DependencyGetter,
+  link?: string,
 ): Promise<ArbiterModule<TApi>> {
   return loadDependencies(meta, fetchDependency, getDependencies).then(
     dependencies => {
-      const app = compileDependency<TApi>(meta.name, content, dependencies);
+      const app = compileDependency<TApi>(meta.name, content, link, dependencies);
       return {
         ...app,
         ...meta,
@@ -78,7 +79,7 @@ export function loadModule<TApi>(
 
   if (link) {
     return fetchDependency(link).then(content =>
-      loadFromContent<TApi>(meta, content, fetchDependency, getDependencies),
+      loadFromContent<TApi>(meta, content, fetchDependency, getDependencies, link),
     );
   } else if (content) {
     return loadFromContent<TApi>(meta, content, fetchDependency, getDependencies);

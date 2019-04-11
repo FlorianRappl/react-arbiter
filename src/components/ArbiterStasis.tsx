@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isfunc } from '../utils';
 import { StasisOptions } from '../types';
 
 export interface ArbiterStasisProps extends StasisOptions {
@@ -27,7 +28,7 @@ export class ArbiterStasis extends React.Component<ArbiterStasisProps, ArbiterSt
   componentDidCatch(error: Error) {
     const { onError } = this.props;
 
-    if (typeof onError === 'function') {
+    if (isfunc(onError)) {
       onError(error);
     }
 
@@ -37,17 +38,17 @@ export class ArbiterStasis extends React.Component<ArbiterStasisProps, ArbiterSt
   }
 
   render() {
-    const { children, renderError } = this.props;
+    const { children, renderError, renderChild } = this.props;
     const { error } = this.state;
 
     if (error) {
-      if (typeof renderError === 'function') {
+      if (isfunc(renderError)) {
         return renderError(error);
       }
 
       return <div style={{ whiteSpace: 'pre-wrap' }}>{error && error.message}</div>;
     }
 
-    return children;
+    return isfunc(renderChild) ? renderChild(children) : children;
   }
 }

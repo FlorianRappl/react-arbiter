@@ -16,17 +16,24 @@ function requireModule(name: string, dependencies: AvailableDependencies) {
  * Compiles the given content from a generic dependency.
  * @param name The name of the dependency to compile.
  * @param content The content of the dependency to compile.
+ * @param link The optional link to the dependency.
  * @param dependencies The globally available dependencies.
  * @returns The evaluated dependency.
  */
-export function evalDependency<TApi>(name: string, content: string, dependencies: AvailableDependencies = {}) {
+export function evalDependency<TApi>(
+  name: string,
+  content: string,
+  link = '',
+  dependencies: AvailableDependencies = {},
+) {
   const mod = {
     exports: {},
   } as ArbiterModuleExports<TApi>;
   const require = (moduleName: string) => requireModule(moduleName, dependencies);
 
   try {
-    const importer = new Function('module', 'exports', 'require', content);
+    const sourceUrl = link && `\n//# sourceURL=${link}`;
+    const importer = new Function('module', 'exports', 'require', content + sourceUrl);
     importer(mod, mod.exports, require);
   } catch (e) {
     console.error(`Error while evaluating ${name}.`, e);
@@ -39,15 +46,17 @@ export function evalDependency<TApi>(name: string, content: string, dependencies
  * Compiles the given content from a module with a dependency resolution.
  * @param name The name of the dependency to compile.
  * @param content The content of the dependency to compile.
+ * @param link The optional link to the dependency.
  * @param dependencies The globally available dependencies.
  * @returns The evaluated module.
  */
 export function compileDependency<TApi>(
   name: string,
   content: string,
-  dependencies: AvailableDependencies,
+  link = '',
+  dependencies: AvailableDependencies = {},
 ): ArbiterModuleApp<TApi> {
-  const app = evalDependency<TApi>(name, content, dependencies);
+  const app = evalDependency<TApi>(name, content, link, dependencies);
 
   if (!app) {
     console.error('Invalid module found.', name);

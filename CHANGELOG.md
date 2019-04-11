@@ -3,6 +3,8 @@
 ## 0.5.0
 
 - Throw `MODULE_NOT_FOUND` error if module cannot be found
+- Support for `sourceURL` added
+- Added `isfunc` utility
 
 ## 0.4.1
 

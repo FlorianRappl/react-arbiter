@@ -122,6 +122,10 @@ export interface StasisOptions {
    * Place a renderer here to customize the error output.
    */
   renderError?(error: Error): React.ReactNode;
+  /**
+   * Place a renderer here to customize the normal output.
+   */
+  renderChild?(child: React.ReactNode): React.ReactNode;
 }
 
 export interface WrapComponentOptions<T> extends StasisOptions {

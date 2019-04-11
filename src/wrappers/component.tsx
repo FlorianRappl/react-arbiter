@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ArbiterStasis } from '../components';
+import { isfunc } from '../utils';
 import { RenderCallback, ComponentDefinition, StasisOptions, WrapComponentOptions } from '../types';
 
 function createForeignComponentContainer<T>(contextTypes = ['router']) {
@@ -76,7 +77,7 @@ export function wrapComponent<T, U>(value: ComponentDefinition<T & U>, options: 
     const argAsRender = value as RenderCallback<T & U>;
     const argRender = argAsReact.prototype && argAsReact.prototype.render;
 
-    if (typeof argRender === 'function' || argAsReact.displayName) {
+    if (isfunc(argRender) || argAsReact.displayName) {
       return wrapReactComponent<T, U>(argAsReact, stasisOptions, forwardProps);
     }
 
