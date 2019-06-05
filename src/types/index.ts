@@ -160,7 +160,7 @@ export interface ArbiterOptions<TApi> {
   fetchModules: ArbiterModuleFetcher;
   /**
    * Optionally, some already existing evaluated modules, e.g.,
-   * helpful when debugging.
+   * helpful when debugging or in SSR scenarios.
    */
   modules?: Array<ArbiterModule<TApi>>;
   /**
@@ -178,7 +178,7 @@ export interface ArbiterOptions<TApi> {
    */
   dependencies?: AvailableDependencies;
   /**
-   * Optionally uses the defined cache. For a default implementation
+   * Optionally uses a defined cache. For a default implementation
    * use the `openCache` method, which is based on IndexDB.
    */
   cache?: ArbiterModuleCache;

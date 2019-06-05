@@ -22,6 +22,24 @@ const defaultCache: ArbiterModuleCache = {
   },
 };
 
+function checkCreateApi<TApi>(createApi: ApiCreator<TApi>) {
+  if (!isfunc(createApi)) {
+    console.warn('Invalid `createApi` function. Skipping module installation.');
+    return false;
+  }
+
+  return true;
+}
+
+function checkFetchModules(fetchModules: ArbiterModuleFetcher) {
+  if (!isfunc(fetchModules)) {
+    console.error('Could not get the modules. Provide a valid `getModules` function as prop.');
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * Loads the modules by first getting them, then evaluating the raw content.
  * @param fetchModules The function to resolve the modules.
@@ -36,7 +54,7 @@ export function loadModules<TApi>(
   getLocalDependencies = defaultGetDependencies,
   cache = defaultCache,
 ): Promise<Array<ArbiterModule<TApi>>> {
-  if (isfunc(fetchModules)) {
+  if (checkFetchModules(fetchModules)) {
     const getDependencies: DependencyGetter = target => {
       return getLocalDependencies(target) || globalDependencies;
     };
@@ -46,27 +64,39 @@ export function loadModules<TApi>(
         .then(receivedModules => cache.update(cachedModules, receivedModules))
         .then(moduleData => Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, getDependencies)))),
     );
-  } else {
-    console.error('Could not get the modules. Provide a valid `getModules` function as prop.');
-    return Promise.resolve([]);
   }
+
+  return Promise.resolve([]);
 }
 
 /**
  * Sets up the evaluated modules to become integrated modules.
  * @param createApi The function to create an API object for a module.
- * @param modules The available evaluated modules.
+ * @param modules The available evaluated app modules.
  * @returns The integrated modules.
  */
-export function setupModules<TApi>(createApi: ApiCreator<TApi>, modules: Array<ArbiterModule<TApi>>) {
-  if (isfunc(createApi)) {
+export function createModules<TApi>(createApi: ApiCreator<TApi>, modules: Array<ArbiterModule<TApi>>) {
+  if (checkCreateApi(createApi)) {
     for (const app of modules) {
       const api = createApi(app);
       setupModule(app, api);
     }
-  } else {
-    console.warn('Invalid `createApi` function. Skipping module installation.');
   }
 
   return modules;
+}
+
+/**
+ * Sets up an evaluated module to become an integrated module.
+ * @param createApi The function to create an API object for the module.
+ * @param app The available evaluated app module.
+ * @returns The integrated module.
+ */
+export function createModule<TApi>(createApi: ApiCreator<TApi>, app: ArbiterModule<TApi>) {
+  if (checkCreateApi(createApi)) {
+    const api = createApi(app);
+    setupModule(app, api);
+  }
+
+  return app;
 }

@@ -66,7 +66,6 @@ function wrapForeignComponent<T, U>(
  * with automatic stasis usage.
  * @param value The component value to wrap within a stasis.
  * @param options The options to consider.
- * @param contextTypes The available context types for non-React components.
  * @returns A React component wrapping the value.
  */
 export function wrapComponent<T, U>(value: ComponentDefinition<T & U>, options: WrapComponentOptions<U> = {}) {

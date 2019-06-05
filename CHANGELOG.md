@@ -1,5 +1,9 @@
 # React Arbiter Changelog
 
+## 0.6.0
+
+- Changed `setupModules` to `createModules`
+
 ## 0.5.0
 
 - Throw `MODULE_NOT_FOUND` error if module cannot be found

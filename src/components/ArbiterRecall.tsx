@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { setupModules, loadModules, isfunc } from '../utils';
+import { createModules, loadModules, isfunc } from '../utils';
 import { ArbiterModule, ArbiterDisplay, ArbiterOptions } from '../types';
 
 export interface ArbiterRecallProps<TApi> extends ArbiterOptions<TApi> {
@@ -36,7 +36,7 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
     this.setState({
       error,
       loaded: true,
-      modules: setupModules(createApi, [...oldModules, ...newModules]),
+      modules: createModules(createApi, [...oldModules, ...newModules]),
     });
   }
 
