@@ -3,6 +3,7 @@
 ## 0.6.0
 
 - Changed `setupModules` to `createModules`
+- Updated dependencies
 
 ## 0.5.0
 
