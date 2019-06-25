@@ -1,5 +1,10 @@
 # React Arbiter Changelog
 
+## 0.7.0
+
+- Improved HOC signatures to support currying (`createRecall`, `createStasis`)
+- Introduced new `async` parameter
+
 ## 0.6.0
 
 - Changed `setupModules` to `createModules`

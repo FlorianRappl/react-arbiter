@@ -25,7 +25,7 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
   constructor(props: ArbiterRecallProps<TApi>) {
     super(props);
     this.state = {
-      loaded: false,
+      loaded: props.async || false,
       modules: [],
     };
   }

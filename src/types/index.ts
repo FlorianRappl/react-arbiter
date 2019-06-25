@@ -182,6 +182,11 @@ export interface ArbiterOptions<TApi> {
    * use the `openCache` method, which is based on IndexDB.
    */
   cache?: ArbiterModuleCache;
+  /**
+   * Optionally, sets the loading scheme to be asynchronous and
+   * thus skipping the "loading" state.
+   */
+  async?: boolean;
 }
 
 export type ComponentDefinition<T> = ComponentType<T> | RenderCallback<T>;
