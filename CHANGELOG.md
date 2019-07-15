@@ -1,5 +1,11 @@
 # React Arbiter Changelog
 
+## 0.7.1
+
+- Drop new modules if they would override existing modules
+- Updated dependencies
+- Fixed vulnerabilities in third-party dependencies
+
 ## 0.7.0
 
 - Improved HOC signatures to support currying (`createRecall`, `createStasis`)

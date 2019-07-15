@@ -33,6 +33,14 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
   private finish(error: any, newModules: Array<ArbiterModule<TApi>>) {
     const { createApi, modules: oldModules = [] } = this.props;
 
+    for (const oldModule of oldModules) {
+      const [newModule] = newModules.filter(m => m.name === oldModule.name);
+
+      if (newModule) {
+        newModules.splice(newModules.indexOf(newModule), 1);
+      }
+    }
+
     this.setState({
       error,
       loaded: true,
