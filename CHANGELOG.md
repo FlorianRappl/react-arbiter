@@ -1,5 +1,9 @@
 # React Arbiter Changelog
 
+## 0.7.2
+
+- Expose package typings 
+
 ## 0.7.1
 
 - Drop new modules if they would override existing modules
