@@ -1,8 +1,13 @@
 # React Arbiter Changelog
 
+## 0.8.0
+
+- Removed `dependencies` field from metadata
+- Added `custom` field to metadata
+
 ## 0.7.2
 
-- Expose package typings 
+- Expose package typings
 
 ## 0.7.1
 

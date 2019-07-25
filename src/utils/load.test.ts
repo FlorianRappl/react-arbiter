@@ -8,7 +8,6 @@ describe('Loading Modules', () => {
         content: 'module.exports = { setup: function () {} }',
         name: 'mymodule',
         version: '1.0.0',
-        dependencies: {},
         hash: '1',
       },
       dependencyRequest,
@@ -25,19 +24,13 @@ describe('Loading Modules', () => {
         content: 'module.exports = { setup: function () {} }',
         name: 'mymodule',
         version: '1.0.0',
-        dependencies: {
-          foo: 'a',
-          bar: 'b',
-        },
         hash: '1',
       },
       dependencyRequest,
       () => ({}),
     );
     expect(result.setup).not.toBeUndefined();
-    expect(dependencyRequest).toHaveBeenCalledTimes(2);
-    expect(dependencyRequest).toHaveBeenNthCalledWith(1, 'a');
-    expect(dependencyRequest).toHaveBeenNthCalledWith(2, 'b');
+    expect(dependencyRequest).toHaveBeenCalledTimes(0);
   });
 
   it('loading a module without its dependencies should work', async () => {
@@ -48,18 +41,14 @@ describe('Loading Modules', () => {
         content: 'module.exports = { setup: function () {} }',
         name: 'mymodule',
         version: '1.0.0',
-        dependencies: {
-          foo: 'a',
-        },
         hash: '1',
       },
       dependencyRequest,
       () => ({}),
     );
     expect(result.setup).not.toBeUndefined();
-    expect(dependencyRequest).toHaveBeenCalledTimes(1);
-    expect(dependencyRequest).toHaveBeenCalledWith('a');
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(dependencyRequest).toHaveBeenCalledTimes(0);
+    expect(console.error).toHaveBeenCalledTimes(0);
   });
 
   it('loading a dependency free link-module should work', async () => {
@@ -71,7 +60,6 @@ describe('Loading Modules', () => {
         link: 'module.exports = { setup: function () {} }',
         name: 'mymodule',
         version: '1.0.0',
-        dependencies: {},
         hash: '1',
       },
       dependencyRequest,
@@ -92,20 +80,14 @@ describe('Loading Modules', () => {
         link: 'module.exports = { setup: function () {} }',
         name: 'mymodule',
         version: '1.0.0',
-        dependencies: {
-          foo: 'a',
-          bar: 'b',
-        },
         hash: '1',
       },
       dependencyRequest,
       () => ({}),
     );
     expect(result.setup).not.toBeUndefined();
-    expect(dependencyRequest).toHaveBeenCalledTimes(3);
+    expect(dependencyRequest).toHaveBeenCalledTimes(1);
     expect(dependencyRequest).toHaveBeenNthCalledWith(1, 'module.exports = { setup: function () {} }');
-    expect(dependencyRequest).toHaveBeenNthCalledWith(2, 'a');
-    expect(dependencyRequest).toHaveBeenNthCalledWith(3, 'b');
     expect(console.error).toHaveBeenCalledTimes(0);
     expect(console.warn).toHaveBeenCalledTimes(0);
   });

@@ -1,11 +1,5 @@
-import { evalDependency, compileDependency } from './dependency';
-import {
-  ArbiterModuleMetadata,
-  ArbiterModule,
-  DependencyFetcher,
-  AvailableDependencies,
-  DependencyGetter,
-} from '../types';
+import { compileDependency } from './dependency';
+import { ArbiterModuleMetadata, ArbiterModule, DependencyFetcher, DependencyGetter } from '../types';
 
 function createEmptyModule(meta: ArbiterModuleMetadata) {
   return {
@@ -14,52 +8,20 @@ function createEmptyModule(meta: ArbiterModuleMetadata) {
   };
 }
 
-function loadDependencies(
-  meta: ArbiterModuleMetadata,
-  fetchDependency: DependencyFetcher,
-  getDependencies: DependencyGetter,
-): Promise<AvailableDependencies> {
-  const dependencies = {
-    ...(getDependencies(meta) || {}),
-  };
-  const existingDependencies = Object.keys(dependencies);
-  const dependencyMap = Object.keys(meta.dependencies || {})
-    .filter(name => existingDependencies.indexOf(name) === -1)
-    .map(name => ({
-      name,
-      url: meta.dependencies[name],
-      content: '',
-    }));
-
-  return Promise.all(dependencyMap.map(m => fetchDependency(m.url).then(c => (m.content = c)))).then(() => {
-    for (const item of dependencyMap) {
-      dependencies[item.name] = evalDependency(item.name, item.content, item.url, dependencies);
-    }
-
-    return dependencies;
-  });
-}
-
 function loadFromContent<TApi>(
   meta: ArbiterModuleMetadata,
   content: string,
-  fetchDependency: DependencyFetcher,
   getDependencies: DependencyGetter,
   link?: string,
-): Promise<ArbiterModule<TApi>> {
-  return loadDependencies(meta, fetchDependency, getDependencies).then(
-    dependencies => {
-      const app = compileDependency<TApi>(meta.name, content, link, dependencies);
-      return {
-        ...app,
-        ...meta,
-      };
-    },
-    error => {
-      console.error(`Could not load the dependencies of ${meta.name}.`, error);
-      return createEmptyModule(meta);
-    },
-  );
+): ArbiterModule<TApi> {
+  const dependencies = {
+    ...(getDependencies(meta) || {}),
+  };
+  const app = compileDependency<TApi>(meta.name, content, link, dependencies);
+  return {
+    ...app,
+    ...meta,
+  };
 }
 
 /**
@@ -76,13 +38,10 @@ export function loadModule<TApi>(
   getDependencies: DependencyGetter,
 ): Promise<ArbiterModule<TApi>> {
   const { link, content } = meta;
+  const retrieve = link ? fetchDependency(link) : content ? Promise.resolve(content) : undefined;
 
-  if (link) {
-    return fetchDependency(link).then(content =>
-      loadFromContent<TApi>(meta, content, fetchDependency, getDependencies, link),
-    );
-  } else if (content) {
-    return loadFromContent<TApi>(meta, content, fetchDependency, getDependencies);
+  if (retrieve) {
+    return retrieve.then(content => loadFromContent<TApi>(meta, content, getDependencies, link));
   } else {
     console.warn('Empty module found!', meta.name);
   }

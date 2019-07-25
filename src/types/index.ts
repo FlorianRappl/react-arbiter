@@ -10,16 +10,6 @@ export interface ArbiterModuleMetadata {
    */
   version: string;
   /**
-   * The dependency map of the module.
-   */
-  dependencies: {
-    /**
-     * The name of the dependency and the related location, which
-     * defines where to get (i.e., fetch) it from.
-     */
-    [name: string]: string;
-  };
-  /**
    * The content of the module. If the content is not available
    * the link will be used (unless caching has been activated).
    */
@@ -40,6 +30,10 @@ export interface ArbiterModuleMetadata {
    * required or set.
    */
   noCache?: boolean | string;
+  /**
+   * Optionally provides some custom metadata for the module.
+   */
+  custom?: any;
 }
 
 export interface ArbiterModuleApp<TApi> {
