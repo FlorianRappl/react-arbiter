@@ -3,6 +3,7 @@
 ## 0.9.0
 
 - Introduced loading strategies via `strategy`
+- Added `blazingStrategy` for loading modules one-by-one
 - Updated dependencies
 
 ## 0.8.0
