@@ -1,5 +1,10 @@
 # React Arbiter Changelog
 
+## 0.9.0
+
+- Introduced loading strategies via `strategy`
+- Updated dependencies
+
 ## 0.8.0
 
 - Removed `dependencies` field from metadata

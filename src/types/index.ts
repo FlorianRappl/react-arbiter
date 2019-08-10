@@ -142,7 +142,15 @@ export interface WrapElementOptions extends StasisOptions {
   wrapper?: ComponentType<{ ref: Ref<HTMLElement> }> | string;
 }
 
-export interface ArbiterOptions<TApi> {
+export interface ArbiterRecallModulesLoaded<TApi> {
+  (error: Error | undefined, modules: Array<ArbiterModule<TApi>>): void;
+}
+
+export interface ArbiterRecallStrategy<TApi> {
+  (options: ArbiterRecallOptions<TApi>, modulesLoaded: ArbiterRecallModulesLoaded<TApi>): Promise<void>;
+}
+
+export interface ArbiterRecallOptions<TApi> {
   /**
    * The callback function for creating an API object.
    * The API object is passed on to a specific module.
@@ -176,11 +184,20 @@ export interface ArbiterOptions<TApi> {
    * use the `openCache` method, which is based on IndexDB.
    */
   cache?: ArbiterModuleCache;
+}
+
+export interface ArbiterOptions<TApi> extends ArbiterRecallOptions<TApi> {
   /**
    * Optionally, sets the loading scheme to be asynchronous and
    * thus skipping the "loading" state.
    */
   async?: boolean;
+  /**
+   * Optionally, defines the recall strategy. This could override
+   * the async option, as async is just a shorthand for the async
+   * loading strategy.
+   */
+  strategy?: ArbiterRecallStrategy<TApi>;
 }
 
 export type ComponentDefinition<T> = ComponentType<T> | RenderCallback<T>;

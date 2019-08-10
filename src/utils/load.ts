@@ -1,5 +1,6 @@
 import { compileDependency } from './dependency';
-import { ArbiterModuleMetadata, ArbiterModule, DependencyFetcher, DependencyGetter } from '../types';
+import { defaultFetchDependency } from './fetch';
+import { ArbiterModuleMetadata, ArbiterModule, DependencyGetter } from '../types';
 
 function createEmptyModule(meta: ArbiterModuleMetadata) {
   return {
@@ -34,8 +35,8 @@ function loadFromContent<TApi>(
  */
 export function loadModule<TApi>(
   meta: ArbiterModuleMetadata,
-  fetchDependency: DependencyFetcher,
   getDependencies: DependencyGetter,
+  fetchDependency = defaultFetchDependency,
 ): Promise<ArbiterModule<TApi>> {
   const { link, content } = meta;
   const retrieve = link ? fetchDependency(link) : content ? Promise.resolve(content) : undefined;

@@ -1,6 +1,5 @@
-import { loadModule } from './load';
-import { defaultFetchDependency } from './fetch';
 import { setupModule } from './setup';
+import { loadModule } from './load';
 import { isfunc } from './isfunc';
 import {
   AvailableDependencies,
@@ -9,6 +8,7 @@ import {
   ApiCreator,
   ArbiterModuleFetcher,
   ArbiterModuleCache,
+  DependencyFetcher,
 } from '../types';
 
 const defaultGlobalDependencies: AvailableDependencies = {};
@@ -41,6 +41,32 @@ function checkFetchModules(fetchModules: ArbiterModuleFetcher) {
 }
 
 /**
+ * Loads the modules metadata and puts them in the cache, if provided.
+ * @param fetchModules The function to resolve the modules.
+ * @param cache The optional cache to use initially and update later.
+ */
+export function loadModulesMetadata(fetchModules: ArbiterModuleFetcher, cache = defaultCache) {
+  if (checkFetchModules(fetchModules)) {
+    return Promise.resolve(cache.retrieve()).then(cachedModules =>
+      Promise.resolve(fetchModules(cachedModules || [])).then(receivedModules =>
+        cache.update(cachedModules, receivedModules),
+      ),
+    );
+  }
+
+  return Promise.resolve([]);
+}
+
+export function getDependencyResolver(
+  globalDependencies = defaultGlobalDependencies,
+  getLocalDependencies = defaultGetDependencies,
+): DependencyGetter {
+  return target => {
+    return getLocalDependencies(target) || globalDependencies;
+  };
+}
+
+/**
  * Loads the modules by first getting them, then evaluating the raw content.
  * @param fetchModules The function to resolve the modules.
  * @param fetchDependency A function to fetch the dependencies. By default, `fetch` is used.
@@ -49,24 +75,16 @@ function checkFetchModules(fetchModules: ArbiterModuleFetcher) {
  */
 export function loadModules<TApi>(
   fetchModules: ArbiterModuleFetcher,
-  fetchDependency = defaultFetchDependency,
-  globalDependencies = defaultGlobalDependencies,
-  getLocalDependencies = defaultGetDependencies,
-  cache = defaultCache,
+  fetchDependency?: DependencyFetcher,
+  globalDependencies?: AvailableDependencies,
+  getLocalDependencies?: DependencyGetter,
+  cache?: ArbiterModuleCache,
 ): Promise<Array<ArbiterModule<TApi>>> {
-  if (checkFetchModules(fetchModules)) {
-    const getDependencies: DependencyGetter = target => {
-      return getLocalDependencies(target) || globalDependencies;
-    };
+  const getDependencies = getDependencyResolver(globalDependencies, getLocalDependencies);
 
-    return Promise.resolve(cache.retrieve()).then(cachedModules =>
-      Promise.resolve(fetchModules(cachedModules || []))
-        .then(receivedModules => cache.update(cachedModules, receivedModules))
-        .then(moduleData => Promise.all(moduleData.map(m => loadModule<TApi>(m, fetchDependency, getDependencies)))),
-    );
-  }
-
-  return Promise.resolve([]);
+  return loadModulesMetadata(fetchModules, cache).then(moduleData =>
+    Promise.all(moduleData.map(m => loadModule<TApi>(m, getDependencies, fetchDependency))),
+  );
 }
 
 /**

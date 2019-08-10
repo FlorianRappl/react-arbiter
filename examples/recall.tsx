@@ -32,21 +32,18 @@ const Arbiter = withRecall(DisplayModules, {
             {
               version: '1.0.0',
               name: 'A',
-              dependencies: {},
               content: 'module.exports = { setup: function(api) { console.log(api, "Module A"); } }',
               hash: '1',
             },
             {
               version: '1.0.0',
               name: 'B',
-              dependencies: {},
               content: 'module.exports = { setup: function(api) { console.log(api, "Module B"); } }',
               hash: '2',
             },
             {
               version: '1.0.0',
               name: 'C',
-              dependencies: {},
               content: 'module.exports = { setup: function(api) { console.log(api, "Module C"); } }',
               hash: '3',
             },

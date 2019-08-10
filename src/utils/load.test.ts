@@ -10,8 +10,8 @@ describe('Loading Modules', () => {
         version: '1.0.0',
         hash: '1',
       },
-      dependencyRequest,
       () => ({}),
+      dependencyRequest,
     );
     expect(result.setup).not.toBeUndefined();
     expect(dependencyRequest).toHaveBeenCalledTimes(0);
@@ -26,8 +26,8 @@ describe('Loading Modules', () => {
         version: '1.0.0',
         hash: '1',
       },
-      dependencyRequest,
       () => ({}),
+      dependencyRequest,
     );
     expect(result.setup).not.toBeUndefined();
     expect(dependencyRequest).toHaveBeenCalledTimes(0);
@@ -43,8 +43,8 @@ describe('Loading Modules', () => {
         version: '1.0.0',
         hash: '1',
       },
-      dependencyRequest,
       () => ({}),
+      dependencyRequest,
     );
     expect(result.setup).not.toBeUndefined();
     expect(dependencyRequest).toHaveBeenCalledTimes(0);
@@ -62,8 +62,8 @@ describe('Loading Modules', () => {
         version: '1.0.0',
         hash: '1',
       },
-      dependencyRequest,
       () => ({}),
+      dependencyRequest,
     );
     expect(result.setup).not.toBeUndefined();
     expect(dependencyRequest).toHaveBeenCalledTimes(1);
@@ -82,8 +82,8 @@ describe('Loading Modules', () => {
         version: '1.0.0',
         hash: '1',
       },
-      dependencyRequest,
       () => ({}),
+      dependencyRequest,
     );
     expect(result.setup).not.toBeUndefined();
     expect(dependencyRequest).toHaveBeenCalledTimes(1);

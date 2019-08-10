@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { createModules, loadModules, isfunc } from '../utils';
+import { isfunc } from '../utils';
+import { asyncStrategy, standardStrategy } from '../strategies';
 import { ArbiterModule, ArbiterDisplay, ArbiterOptions } from '../types';
 
 export interface ArbiterRecallProps<TApi> extends ArbiterOptions<TApi> {
@@ -25,39 +26,24 @@ export class ArbiterRecall<TApi> extends React.Component<ArbiterRecallProps<TApi
   constructor(props: ArbiterRecallProps<TApi>) {
     super(props);
     this.state = {
-      loaded: props.async || false,
+      loaded: false,
       modules: [],
     };
   }
 
-  private finish(error: any, newModules: Array<ArbiterModule<TApi>>) {
-    const { createApi, modules: oldModules = [] } = this.props;
+  private setLoaded = () => this.mounted && this.setState({ loaded: true });
 
-    for (const oldModule of oldModules) {
-      const [newModule] = newModules.filter(m => m.name === oldModule.name);
-
-      if (newModule) {
-        newModules.splice(newModules.indexOf(newModule), 1);
-      }
-    }
-
+  private setModules = (error: any, modules: Array<ArbiterModule<TApi>>) =>
+    this.mounted &&
     this.setState({
       error,
-      loaded: true,
-      modules: createModules(createApi, [...oldModules, ...newModules]),
+      modules,
     });
-  }
 
   componentDidMount() {
-    const { fetchModules, dependencies, getDependencies, fetchDependency, cache } = this.props;
+    const { async, strategy = async ? asyncStrategy : standardStrategy, ...options } = this.props;
     this.mounted = true;
-
-    if (isfunc(fetchModules)) {
-      loadModules(fetchModules, fetchDependency, dependencies, getDependencies, cache).then(
-        modules => this.mounted && this.finish(undefined, modules),
-        error => this.mounted && this.finish(error, []),
-      );
-    }
+    strategy(options, this.setModules).then(this.setLoaded, this.setLoaded);
   }
 
   componentWillUnmount() {
