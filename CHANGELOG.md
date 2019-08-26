@@ -1,5 +1,11 @@
 # React Arbiter Changelog
 
+## 0.9.1
+
+- Improved `blazingStrategy` typing
+- Introduced `createProgressiveStrategy` for more flexibility
+- Updated dependencies
+
 ## 0.9.0
 
 - Introduced loading strategies via `strategy`
