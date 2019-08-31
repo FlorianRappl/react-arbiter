@@ -27,7 +27,8 @@
     ],
     "jsx": "react",
     "suppressImplicitAnyIndexErrors": true,
-    "allowSyntheticDefaultImports": false
+    "allowSyntheticDefaultImports": false,
+    "importHelpers": true
   },
   "include": [
     "./src/**/*"

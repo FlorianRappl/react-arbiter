@@ -1,5 +1,10 @@
 # React Arbiter Changelog
 
+## 0.9.2
+
+- Forward props to the render error
+- Reference `tslib` for smaller code emission
+
 ## 0.9.1
 
 - Improved `blazingStrategy` typing
