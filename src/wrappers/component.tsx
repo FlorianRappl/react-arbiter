@@ -40,7 +40,7 @@ function wrapReactComponent<T, U>(
   componentOptions: U | undefined,
 ): React.ComponentType<T> {
   return (props: T) => (
-    <ArbiterStasis {...stasisOptions}>
+    <ArbiterStasis {...stasisOptions} renderProps={props}>
       <Component {...props} {...(componentOptions || ({} as any))} />
     </ArbiterStasis>
   );
@@ -55,7 +55,7 @@ function wrapForeignComponent<T, U>(
   const Component = createForeignComponentContainer<T>(contextTypes);
 
   return (props: T) => (
-    <ArbiterStasis {...stasisOptions}>
+    <ArbiterStasis {...stasisOptions} renderProps={props}>
       <Component {...props} {...(componentOptions || ({} as any))} render={render} />
     </ArbiterStasis>
   );

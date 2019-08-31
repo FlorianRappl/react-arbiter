@@ -38,17 +38,17 @@ export class ArbiterStasis extends React.Component<ArbiterStasisProps, ArbiterSt
   }
 
   render() {
-    const { children, renderError, renderChild } = this.props;
+    const { children, renderError, renderChild, renderProps } = this.props;
     const { error } = this.state;
 
     if (error) {
       if (isfunc(renderError)) {
-        return renderError(error);
+        return renderError(error, renderProps);
       }
 
       return <div style={{ whiteSpace: 'pre-wrap' }}>{error && error.message}</div>;
     }
 
-    return isfunc(renderChild) ? renderChild(children) : children;
+    return isfunc(renderChild) ? renderChild(children, renderProps) : children;
   }
 }

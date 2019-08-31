@@ -115,11 +115,15 @@ export interface StasisOptions {
   /**
    * Place a renderer here to customize the error output.
    */
-  renderError?(error: Error): React.ReactNode;
+  renderError?(error: Error, renderProps?: any): React.ReactNode;
   /**
    * Place a renderer here to customize the normal output.
    */
-  renderChild?(child: React.ReactNode): React.ReactNode;
+  renderChild?(child: React.ReactNode, renderProps?: any): React.ReactNode;
+  /**
+   * The props to pass on to the render error and render child.
+   */
+  renderProps?: any;
 }
 
 export interface WrapComponentOptions<T> extends StasisOptions {
