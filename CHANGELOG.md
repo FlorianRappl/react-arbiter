@@ -1,5 +1,9 @@
 # React Arbiter Changelog
 
+## 0.9.4
+
+- Updated dependencies
+
 ## 0.9.3
 
 - Updated dependencies

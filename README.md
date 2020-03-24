@@ -7,6 +7,8 @@
 
 React Arbiter provides a sets of components and utilities to recall runtime extensions to your application and to stasis third-party components to avoid crashing your application.
 
+> :warning: **Deprecated**! Please use [Piral](https://piral.io) instead.
+
 ## Getting Started
 
 You need to have [Node](https://nodejs.org/) with NPM installed. In your repository run
